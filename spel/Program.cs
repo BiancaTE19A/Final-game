@@ -249,6 +249,9 @@ namespace mitt_spel
                     //rita ut bakgrunden 
                     Raylib.DrawTextureEx(backGroundImg, new Vector2(backgroundMoving, 0), 0, 10f, Color.WHITE);
                     Raylib.DrawTextureEx(backGroundImg, new Vector2(backGroundImg.width * 10 + backgroundMoving, 0), 0, 10f, Color.WHITE);
+                    //rita ut plattform
+                    Raylib.DrawRectangle((int)backgroundMoving + 700, 640, 400, 60, Color.ORANGE);
+
                     //rita ut marken
                     Raylib.DrawRectangle(0, 800, 1920, 200, Color.GREEN);
 
@@ -271,6 +274,7 @@ namespace mitt_spel
                     playerFlip = result.pFlip;
                     playerXpos = result.pX;
                     backgroundMoving = result.bgMoving;
+
 
                     if (Raylib.IsKeyDown(KeyboardKey.KEY_A) || (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT)))
                     {
@@ -352,6 +356,12 @@ namespace mitt_spel
                     {
                         playerYpos = 650;
                     }
+
+                    // //collision platform
+                    // if (Raylib.CheckCollisionRecs(new Rectangle(playerXpos, playerYpos, 100, 100), new Rectangle()))
+                    // {
+                    //     //stop
+                    // }
 
 
                     // Raylib.EndMode2D();
