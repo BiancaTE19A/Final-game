@@ -19,6 +19,7 @@ namespace mitt_spel
             //Background
             Texture2D cloudImg = Raylib.LoadTexture("cloud.png");
             Texture2D backGroundImg = Raylib.LoadTexture("himmelBakgrund.png");
+            Texture2D tunnelImg = Raylib.LoadTexture("tunnel.png");
             //Player
             Texture2D playerMovingImg1 = Raylib.LoadTexture("playerMoving1.png");
             Texture2D playerMovingFlipImg1 = Raylib.LoadTexture("playerMovingFlip1.png");
@@ -56,17 +57,20 @@ namespace mitt_spel
             //PLAYER VALUES
             float gravity = 10;
             float playerXpos = 100;
-            float playerYpos = 850;
+            float playerYpos = 800;
             bool playerFlip = false;
             bool playerMoving = false;
             float playerMovingCount = 0;
             //player size
-            Rectangle player = new Rectangle(playerXpos, playerYpos, 120, 160);
+            Rectangle player = new Rectangle((int)playerXpos, (int)playerYpos - 10, 120, 160);
 
             //ENEMY values
             // float enemyXpos = 1400;
             // float enemyYpos = 650;
             // float enemySpeed = 0.8f;
+
+            //SPIKES VALUES
+            Rectangle spikes = new Rectangle(300, 630, 50, 150);
 
             //COLOR VALUES
             Color transparentColor = new Color(0, 0, 0, 210);
@@ -83,6 +87,7 @@ namespace mitt_spel
                 //INTRO STATE
                 if (gameState == "intro")
                 {
+
                     mousePosition = Raylib.GetMousePosition();
                     collisionNewGameButton = Raylib.CheckCollisionPointRec(mousePosition, newGameButton);
                     //GRAFIK
@@ -134,6 +139,7 @@ namespace mitt_spel
 
                             if (buttonTimer >= 30)
                             {
+
                                 yesButtonPressed = false;
                                 newGameButtonPressed = false;
                                 buttonTimer = 0;
@@ -179,6 +185,8 @@ namespace mitt_spel
 
                 if (gameState == "game")
                 {
+
+
                     //GRAVITY
                     playerYpos += gravity;
 
@@ -198,24 +206,30 @@ namespace mitt_spel
                     //DRAW GROUND
                     Raylib.DrawRectangle(0, 900, 1920, 100, Color.GREEN);
                     //DRAW PLATFORMS
-                    Raylib.DrawRectangle(0, 575, 200, 50, Color.RED);
-                    Raylib.DrawRectangle(200, 575, 50, 200, Color.GREEN);
-                    Raylib.DrawRectangle(500, 750, 1000, 200, Color.PURPLE);
-                    Raylib.DrawRectangle(1450, 200, 50, 550, Color.LIME);
+                    Raylib.DrawRectangle(0, 605, 250, 50, Color.RED);
+                    Raylib.DrawRectangle(250, 605, 50, 200, Color.GREEN);
+                    Raylib.DrawRectangle(500, 780, 1000, 200, Color.PURPLE);
+                    Raylib.DrawRectangle(1450, 200, 50, 580, Color.LIME);
                     Raylib.DrawRectangle(650, 500, 800, 50, Color.YELLOW);
-                    Raylib.DrawRectangle(0, 375, 400, 50, Color.PINK);
-                    Raylib.DrawRectangle(200, 150, 1720, 50, Color.BLUE);
+                    Raylib.DrawRectangle(0, 365, 400, 50, Color.PINK);
+                    Raylib.DrawRectangle(200, 180, 1720, 20, Color.BLUE);
+
+                    //DRAW TUNNEL
+                    Raylib.DrawTextureEx(tunnelImg, new Vector2(1800, 5), 0.0f, 10f, Color.WHITE);
+
 
                     //DRAW PLAYER RECTANGLE
-                    Raylib.DrawRectangle((int)playerXpos, (int)playerYpos - 10, 120, 160, Color.YELLOW);
+                    player = new Rectangle((int)playerXpos, (int)playerYpos - 10, 120, 160);
+                    Raylib.DrawRectangleRec(player, Color.YELLOW);
 
+                    //SCREEN COLLISION
                     if (playerXpos <= 0)
                     {
                         playerXpos = 0;
                     }
-                    if (playerXpos >= screenWidth)
+                    if (playerXpos >= 1800)
                     {
-                        playerXpos = screenWidth;
+                        playerXpos = 1800;
                     }
                     if (playerYpos <= 0)
                     {
@@ -226,17 +240,17 @@ namespace mitt_spel
 
                     //PLATFORM COLLISION
                     //player-width = 120 | player-height = 150
-                    if (playerXpos > 380 && playerXpos < 384 && playerYpos > 570 && playerYpos < 900)
+                    if (playerXpos > 380 && playerXpos < 390 && playerYpos > 590 && playerYpos < 900)
                     {
                         //checks purple platform collision: left
                         playerXpos = 380;
                     }
 
-                    if (playerXpos > 380 && playerXpos <= 1500 && playerYpos > 600 && playerYpos < 650)
+                    if (playerXpos > 380 && playerXpos <= 1500 && playerYpos > 630 && playerYpos < 680)
                     {
                         //checks purple platform collision: up
                         isGrounded = true;
-                        playerYpos = 600;
+                        playerYpos = 630;
 
                     }
                     if (playerXpos > 530 && playerXpos <= 1500 && playerYpos > 500 && playerYpos < 560)
@@ -256,48 +270,78 @@ namespace mitt_spel
                         //checks yellow platform collision: left
                         playerXpos = 530;
                     }
-                    if (playerXpos >= 0 && playerXpos < 220 && playerYpos > 425 && playerYpos < 475)
+                    if (playerXpos >= 0 && playerXpos < 270 && playerYpos > 455 && playerYpos < 505)
                     {
                         //checks red and green platform collision: up
-                        playerYpos = 425;
+                        playerYpos = 455;
                         isGrounded = true;
                     }
-                    if (playerXpos >= 0 && playerXpos <= 80 && playerYpos > 575 && playerYpos < 625)
+                    if (playerXpos >= 0 && playerXpos <= 130 && playerYpos > 605 && playerYpos < 655)
                     {
                         //checks red platform collision: down
-                        playerYpos = 625;
+                        playerYpos = 655;
                         gravity = 0;
                     }
-                    if (playerXpos > 80 && playerXpos < 220 && playerYpos > 725 && playerYpos < 775)
+                    if (playerXpos > 130 && playerXpos < 270 && playerYpos > 755 && playerYpos <= 805)
                     {
                         //checks green platform collision: down
-                        playerYpos = 775;
+                        playerYpos = 805;
                         gravity = 0;
                     }
-                    if (playerXpos > 80 && playerXpos < 100 && playerYpos > 725 && playerYpos < 775)
+                    if (playerXpos >= 130 && playerXpos < 180 && playerYpos > 655 && playerYpos <= 805)
                     {
                         //checks green platform collision: left
-                        playerXpos = 80;
+                        playerXpos = 130;
+                        //GLITCH I HÖRNET
                     }
 
+                    if (playerXpos >= 0 && playerXpos < 400 && playerYpos > 215 && playerYpos <= 265)
+                    {
+                        //checks pink platform collision: up
+                        playerYpos = 215;
+                        isGrounded = true;
+                    }
+                    if (playerXpos >= 0 && playerXpos < 400 && playerYpos > 375 && playerYpos <= 425)
+                    {
+                        //checks pink platform collision: down
+                        playerYpos = 425;
+                        gravity = 0;
+                    }
+                    if (playerXpos >= 80 && playerXpos <= 1920 && playerYpos > 30 && playerYpos <= 50)
+                    {
+                        //checks blue platform collision: up
+                        playerYpos = 30;
+                        isGrounded = true;
+                    }
+                    if (playerXpos >= 80 && playerXpos < 100 && playerYpos > 30 && playerYpos <= 200)
+                    {
+                        //checks blue platform collision: left
+                        playerXpos = 80;
+                    }
+                    if (playerXpos >= 80 && playerXpos <= 1920 && playerYpos > 180 && playerYpos <= 200)
+                    {
+                        //checks blue platform collision: down
+                        playerYpos = 200;
+                        gravity = 0;
+                    }
 
+                    Raylib.DrawRectangleRec(spikes, Color.BLACK);
+                    if (Raylib.CheckCollisionRecs(player, spikes))
+                    {
+                        gameState = "dead";
+                    }
 
                     //DRAW SPIKES1
-                    Raylib.DrawTriangle(new Vector2(250, 575), new Vector2(250, 625), new Vector2(300, 600), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(250, 625), new Vector2(250, 675), new Vector2(300, 650), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(250, 675), new Vector2(250, 725), new Vector2(300, 700), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(250, 725), new Vector2(250, 775), new Vector2(300, 750), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 605), new Vector2(300, 655), new Vector2(350, 630), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 655), new Vector2(300, 705), new Vector2(350, 680), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 705), new Vector2(300, 755), new Vector2(350, 730), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 755), new Vector2(300, 805), new Vector2(350, 780), Color.BLUE);
                     //DRAW SPIKES2
                     // Raylib.DrawTriangle(new Vector2(600, 775), new Vector2(650, 800), new Vector2(650, 750), Color.BLACK);
                     // Raylib.DrawTriangle(new Vector2(600, 825), new Vector2(650, 850), new Vector2(650, 800), Color.BLACK);
                     // Raylib.DrawTriangle(new Vector2(600, 875), new Vector2(650, 900), new Vector2(650, 850), Color.BLACK);
                     // Raylib.DrawTriangle(new Vector2(600, 925), new Vector2(650, 950), new Vector2(650, 900), Color.BLACK);
 
-                    //PLAYER PLATFORM COLLISION
-                    if (Raylib.CheckCollisionRecs(new Rectangle((int)playerXpos + playerMovingFlipImg1.width * 10, (int)playerYpos + playerMovingFlipImg1.width * 10, playerMovingFlipImg1.width * 10, playerMovingFlipImg1.height * 10), new Rectangle((int)backgroundMoving + 700, 640, 400, 60)))
-                    {
-                        Raylib.DrawRectangle(100, 100, 100, 100, Color.RED);
-                    }
 
                     //DEBUG FUNCTION
                     if (Raylib.IsKeyPressed(KeyboardKey.KEY_P))
@@ -391,12 +435,12 @@ namespace mitt_spel
                     }
 
                     //PLAYER COLLISION TO GROUND
-                    if (playerYpos >= 800)
+                    if (playerYpos >= 820)
                     {
-                        playerYpos = 800;
+                        playerYpos = 820;
                         isGrounded = true;
                     }
-                    else if (playerYpos < 800)
+                    else if (playerYpos < 820)
                     {
                         isGrounded = false;
                     }
@@ -433,6 +477,7 @@ namespace mitt_spel
                         isPaused = false;
                     }
 
+
                     Raylib.EndDrawing();
                 }
                 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,29 +503,56 @@ namespace mitt_spel
                     }
 
                 }
+                if (gameState == "dead")
+                {
+                    Raylib.BeginDrawing();
+                    Raylib.ClearBackground(Color.RED);
+                    Raylib.DrawText("You are dead", 200, 200, 100, Color.BLACK);
+                    Raylib.EndDrawing();
+
+
+                    if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER))
+                    {
+                        playerXpos = 100;
+                        playerYpos = 850;
+                        playerFlip = false;
+                        gameState = "game";
+                    }
+
+
+
+                    // if(menuTarget == 1)
+                    // {
+                    //     menuColor = Color.GRAY;
+                    // }
+                    // else
+                    // {
+                    //     menuColor = Color.WHITE;
+                    // }
+                }
+
 
             }
 
         }
         static (bool, bool, float, float) PlayerMovement(bool pMoving, bool pFlip, float pX, float bgMoving)
         {
+            //PLAYER SPEED
+            //få spelaren att röra sig åt vänster
             if (Raylib.IsKeyDown(KeyboardKey.KEY_A) || Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
             {
                 pMoving = true;
                 pFlip = true;
-                pX -= 2f;
+                pX -= 5f;
                 bgMoving += 1f;
-
-
             }
             //få spelaren att röra sig åt höger 
             else if (Raylib.IsKeyDown(KeyboardKey.KEY_D) || Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
             {
                 pMoving = true;
                 pFlip = false;
-                pX += 2f;
+                pX += 5f;
                 bgMoving -= 1f;
-
             }
             else
             {
@@ -488,7 +560,10 @@ namespace mitt_spel
             }
             return (pMoving, pFlip, pX, bgMoving);
         }
-
     }
 }
+
+
+
+
 
