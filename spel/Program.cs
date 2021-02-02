@@ -19,7 +19,7 @@ namespace mitt_spel
             //Background
             Texture2D cloudImg = Raylib.LoadTexture("cloud.png");
             Texture2D backGroundImg = Raylib.LoadTexture("himmelBakgrund.png");
-            Texture2D tunnelImg = Raylib.LoadTexture("tunnel.png");
+            Texture2D doorImg = Raylib.LoadTexture("tunnel.png");
             //Player
             Texture2D playerMovingImg1 = Raylib.LoadTexture("playerMoving1.png");
             Texture2D playerMovingFlipImg1 = Raylib.LoadTexture("playerMovingFlip1.png");
@@ -72,6 +72,14 @@ namespace mitt_spel
             //SPIKES VALUES
             Rectangle spikes = new Rectangle(300, 630, 50, 150);
 
+            //KEY VALUES
+            bool counterActivated = false;
+            int keyCounter = 0;
+            int totalTime = 3;
+            int keyCountDown = totalTime;
+            Rectangle closedAreaKey = new Rectangle(20, 545, 50, 50);
+            Rectangle nextLevelKey = new Rectangle(20, 20, 20, 20);
+
             //COLOR VALUES
             Color transparentColor = new Color(0, 0, 0, 210);
 
@@ -82,9 +90,15 @@ namespace mitt_spel
             float playerHealth = 180;
             float healthBarWidth = 0;
 
+            //DEATH STATE VALUES
+            string[] message = { "du suger", "lmao du dog igen :)", "så nära.. inte", "hur dålig kan man vara", "d e ett basic fkn spel just finish already", "hahahhahahahahahaha", "försök igen" };
+            Random generator = new Random();
+            int r = generator.Next(message.Length);
+
+
             while (!Raylib.WindowShouldClose())
             {
-                //INTRO STATE
+                //STATE = INTRO
                 if (gameState == "intro")
                 {
 
@@ -183,10 +197,9 @@ namespace mitt_spel
                     Raylib.EndDrawing();
                 }
 
+                //STATE = GAME
                 if (gameState == "game")
                 {
-
-
                     //GRAVITY
                     playerYpos += gravity;
 
@@ -213,10 +226,19 @@ namespace mitt_spel
                     Raylib.DrawRectangle(650, 500, 800, 50, Color.YELLOW);
                     Raylib.DrawRectangle(0, 365, 400, 50, Color.PINK);
                     Raylib.DrawRectangle(200, 180, 1720, 20, Color.BLUE);
+                    //DRAW SPIKES1
+                    Raylib.DrawTriangle(new Vector2(300, 605), new Vector2(300, 655), new Vector2(350, 630), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 655), new Vector2(300, 705), new Vector2(350, 680), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 705), new Vector2(300, 755), new Vector2(350, 730), Color.BLUE);
+                    Raylib.DrawTriangle(new Vector2(300, 755), new Vector2(300, 805), new Vector2(350, 780), Color.BLUE);
+                    //DRAW SPIKES2
+                    // Raylib.DrawTriangle(new Vector2(600, 775), new Vector2(650, 800), new Vector2(650, 750), Color.BLACK);
+                    // Raylib.DrawTriangle(new Vector2(600, 825), new Vector2(650, 850), new Vector2(650, 800), Color.BLACK);
+                    // Raylib.DrawTriangle(new Vector2(600, 875), new Vector2(650, 900), new Vector2(650, 850), Color.BLACK);
+                    // Raylib.DrawTriangle(new Vector2(600, 925), new Vector2(650, 950), new Vector2(650, 900), Color.BLACK);
 
-                    //DRAW TUNNEL
-                    Raylib.DrawTextureEx(tunnelImg, new Vector2(1800, 5), 0.0f, 10f, Color.WHITE);
-
+                    //DRAW DOOR
+                    Raylib.DrawTextureEx(doorImg, new Vector2(1800, 5), 0.0f, 10f, Color.WHITE);
 
                     //DRAW PLAYER RECTANGLE
                     player = new Rectangle((int)playerXpos, (int)playerYpos - 10, 120, 160);
@@ -265,7 +287,7 @@ namespace mitt_spel
                         playerYpos = 350;
                         isGrounded = true;
                     }
-                    if (playerXpos > 530 && playerXpos < 1500 && playerYpos > 500 && playerYpos < 560)
+                    if (playerXpos >= 530 && playerXpos < 540 && playerYpos >= 350 && playerYpos <= 550)
                     {
                         //checks yellow platform collision: left
                         playerXpos = 530;
@@ -292,7 +314,6 @@ namespace mitt_spel
                     {
                         //checks green platform collision: left
                         playerXpos = 130;
-                        //GLITCH I HÖRNET
                     }
 
                     if (playerXpos >= 0 && playerXpos < 400 && playerYpos > 215 && playerYpos <= 265)
@@ -324,31 +345,63 @@ namespace mitt_spel
                         playerYpos = 200;
                         gravity = 0;
                     }
+                    if (playerXpos >= 1330 && playerXpos < 1480 && playerYpos > 200 && playerYpos < 780)
+                    {
+                        //checks lime platform collision: left
+                        playerXpos = 1330;
+                    }
 
-                    Raylib.DrawRectangleRec(spikes, Color.BLACK);
+                    //KEY
+                    if (Raylib.CheckCollisionRecs(closedAreaKey, player))
+                    {
+                        counterActivated = true;
+
+                    }
+                    if (counterActivated == true)
+                    {
+
+                        keyCounter++;
+                        if (keyCounter == 144)
+                        {
+                            keyCountDown--;
+                            keyCounter = 0;
+                        }
+                        if (keyCountDown < 0)
+                        {
+                            keyCounter = 0;
+                            keyCountDown = totalTime;
+                            counterActivated = false;
+                        }
+
+                        Raylib.DrawRectangleRec(closedAreaKey, Color.BLACK);
+                        Raylib.DrawText("" + keyCountDown, 20, 540, 20, Color.YELLOW);
+                    }
+                    else
+                    {
+                        Raylib.DrawRectangleRec(closedAreaKey, Color.RED);
+                    }
+
+
+                    //EXTRA KEY
+                    //EXTRA AREA
+
+                    //spikes rect
+                    //   Raylib.DrawRectangleRec(spikes, Color.BLACK);
+
+
+                    //SPIKES COLLISION
                     if (Raylib.CheckCollisionRecs(player, spikes))
                     {
+                        r = generator.Next(message.Length);
                         gameState = "dead";
                     }
 
-                    //DRAW SPIKES1
-                    Raylib.DrawTriangle(new Vector2(300, 605), new Vector2(300, 655), new Vector2(350, 630), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(300, 655), new Vector2(300, 705), new Vector2(350, 680), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(300, 705), new Vector2(300, 755), new Vector2(350, 730), Color.BLUE);
-                    Raylib.DrawTriangle(new Vector2(300, 755), new Vector2(300, 805), new Vector2(350, 780), Color.BLUE);
-                    //DRAW SPIKES2
-                    // Raylib.DrawTriangle(new Vector2(600, 775), new Vector2(650, 800), new Vector2(650, 750), Color.BLACK);
-                    // Raylib.DrawTriangle(new Vector2(600, 825), new Vector2(650, 850), new Vector2(650, 800), Color.BLACK);
-                    // Raylib.DrawTriangle(new Vector2(600, 875), new Vector2(650, 900), new Vector2(650, 850), Color.BLACK);
-                    // Raylib.DrawTriangle(new Vector2(600, 925), new Vector2(650, 950), new Vector2(650, 900), Color.BLACK);
-
-
                     //DEBUG FUNCTION
-                    if (Raylib.IsKeyPressed(KeyboardKey.KEY_P))
-                    {
-                        playerHealth -= 20;
-                    }
                     Raylib.DrawText("X: " + playerXpos + " Y: " + playerYpos, 100, 100, 32, Color.BLACK);
+                    // if (Raylib.IsKeyPressed(KeyboardKey.KEY_P))
+                    // {
+                    //     playerHealth -= 20;
+                    // }
 
 
                     //PLAYER MOVEMENT
@@ -505,9 +558,12 @@ namespace mitt_spel
                 }
                 if (gameState == "dead")
                 {
+
                     Raylib.BeginDrawing();
                     Raylib.ClearBackground(Color.RED);
-                    Raylib.DrawText("You are dead", 200, 200, 100, Color.BLACK);
+                    Raylib.DrawText("You are dead", 420, 100, 150, Color.BLACK);
+                    Raylib.DrawText("Random message:   " + message[r], 300, screenHeight / 2, 50, Color.BLACK);
+                    Raylib.DrawText("Press 'Enter' to try again", 200, screenHeight / 2 + 100, 100, Color.BLACK);
                     Raylib.EndDrawing();
 
 
