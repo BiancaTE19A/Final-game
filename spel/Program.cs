@@ -38,7 +38,7 @@ namespace mitt_spel
             //GAME VALUES
             float backgroundMoving = 0f;
             bool isGrounded = true;
-            string gameState = "game";
+            string gameState = "intro";
             Vector2 mousePosition = Raylib.GetMousePosition();
             bool mousePressed = Raylib.IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON);
 
